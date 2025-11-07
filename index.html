@@ -1,24 +1,285 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Activities - Manage Student Extracurricular Activities</title>
-    <meta name="description" content="Platform for organizing and managing student extracurricular activities. Track participation, register for events, and stay updated on campus activities." />
-    <meta name="author" content="Campus Activities" />
+<head>
+  <meta charset="UTF-8">
+  <title>Student Extracurricular Activities Platform</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f2ff;
+      margin: 0;
+      padding: 0;
+    }
 
-    <meta property="og:title" content="Campus Activities - Student Extracurricular Platform" />
-    <meta property="og:description" content="Discover clubs, sports, and events. Track your involvement and make the most of your student experience." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    header {
+      background-color: #3399ff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
 
-    <meta name="twitter:card" content="summary_large_image" />s://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
-`
-  <body>
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="http
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s;
+    }
+
+    .slide { display: none; }
+    .active { display: block; }
+
+    h2 {
+      color: #3399ff;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      margin-top: 5px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #5bc0de;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #31b0d5;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #b3d9ff;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e6f2ff;
+    }
+
+    .summary-box {
+      background-color: #f0f8ff;
+      border-left: 5px solid #5bc0de;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .role-btns {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .role-btns button {
+      width: 40%;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Student Extracurricular Activities Platform</h1>
+    <p>Organize and manage student clubs, sports, and events</p>
+    <p>
+      <a href="file:///C:/Users/jagga/OneDrive/Desktop/sample.html" target="_blank" rel="noopener noreferrer"
+         style="display:inline-block; padding:8px 14px; background:#5bc0de; color:#fff; border-radius:6px; text-decoration:none;">
+        Open This Page
+      </a>
+    </p>
+  </header>
+
+  <div class="container">
+    <!-- Slide 0: Login Page -->
+    <div class="slide active" id="slide0">
+      <h2>Login Page 🔐</h2>
+      <p>Select your role to continue:</p>
+      <div class="role-btns">
+        <button onclick="loginAs('admin')">Login as Admin</button>
+        <button onclick="loginAs('user')">Login as Student</button>
+      </div>
+      <br>
+      <label>Username:</label>
+      <input type="text" id="username" placeholder="Enter username">
+      <label>Password:</label>
+      <input type="password" id="password" placeholder="Enter password">
+      <button onclick="verifyLogin()">Login</button>
+      <p id="loginMessage" style="color:red; margin-top:10px;"></p>
+    </div>
+
+    <!-- Slide 1: Admin Panel -->
+    <div class="slide" id="slide1">
+      <h2>Admin Panel 🧑‍💻</h2>
+      <h3>Add New Activity/Event</h3>
+
+      <form id="adminForm">
+        <label>Activity Name:</label>
+        <input type="text" id="activityName" placeholder="e.g., Robotics Workshop" required>
+
+        <label>Type:</label>
+        <select id="activityType" required>
+          <option>Club</option>
+          <option>Sport</option>
+          <option>Event</option>
+          <option>Competition</option>
+        </select>
+
+        <label>Date:</label>
+        <input type="date" id="activityDate" required>
+      </form>
+
+      <div class="buttons">
+        <span></span>
+        <button type="button" onclick="nextSlide(3)">➡️ View Student Panel</button>
+      </div>
+    </div>
+
+    <!-- Slide 2: User (Student) Panel -->
+    <div class="slide" id="slide2">
+      <h2>Student Panel 🎓</h2>
+      <h3>Register for Activity</h3>
+
+      <form id="studentForm">
+        <label>Your Name:</label>
+        <input type="text" id="studentName" placeholder="Enter your full name" required>
+
+        <label>Student ID:</label>
+        <input type="text" id="studentID" placeholder="e.g., 123456" required>
+
+        <label>Select Activity:</label>
+        <select id="selectedActivity" required>
+          <option>Science Club</option>
+          <option>Basketball</option>
+          <option>Art Exhibition</option>
+          <option>Robotics Workshop</option>
+        </select>
+      </form>
+
+      <div class="buttons">
+        <span></span>
+        <button type="button" onclick="nextSlide(3)">Next ➡️</button>
+      </div>
+    </div>
+
+    <!-- Slide 3: Summary -->
+    <div class="slide" id="slide3">
+      <h2>Summary & Upcoming Events 🗓</h2>
+      <div class="summary-box" id="summaryBox">
+        <p><strong>Activity:</strong> <span id="sumActivity"></span></p>
+        <p><strong>Type:</strong> <span id="sumType"></span></p>
+        <p><strong>Date:</strong> <span id="sumDate"></span></p>
+        <p><strong>Student Name:</strong> <span id="sumStudent"></span></p>
+        <p><strong>Student ID:</strong> <span id="sumID"></span></p>
+      </div>
+
+      <h3>Club Timings</h3>
+      <table>
+        <tr><th>Club/Event</th><th>Day</th><th>Time</th></tr>
+        <tr><td>Science Club</td><td>Monday</td><td>4:00 PM - 5:30 PM</td></tr>
+        <tr><td>Basketball</td><td>Wednesday</td><td>5:00 PM - 6:30 PM</td></tr>
+        <tr><td>Art Exhibition</td><td>Friday</td><td>3:00 PM - 6:00 PM</td></tr>
+        <tr><td>Robotics Workshop</td><td>Saturday</td><td>10:00 AM - 1:00 PM</td></tr>
+      </table>
+
+      <div class="buttons">
+        <button type="button" onclick="restartForm()">🏠 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentRole = "";
+
+    function loginAs(role) {
+      currentRole = role;
+      document.getElementById('loginMessage').textContent = "Selected role: " + role.toUpperCase();
+    }
+
+    function verifyLogin() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      if (!currentRole) {
+        alert("Please select your role first!");
+        return;
+      }
+
+      if (currentRole === "admin" && user === "admin" && pass === "1234") {
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        document.getElementById('slide1').classList.add('active');
+      }
+      else if (currentRole === "user" && user === "student" && pass === "1234") {
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        document.getElementById('slide2').classList.add('active');
+      }
+      else {
+        document.getElementById('loginMessage').textContent = "Invalid credentials! Try again.";
+      }
+    }
+
+    function nextSlide(num) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      document.getElementById('slide' + num).classList.add('active');
+
+      // Summary details for student registration
+      if (num === 3 && currentRole === "user") {
+        document.getElementById('sumActivity').textContent = document.getElementById('selectedActivity').value;
+        document.getElementById('sumType').textContent = "Club/Event";
+        document.getElementById('sumDate').textContent = new Date().toLocaleDateString();
+        document.getElementById('sumStudent').textContent = document.getElementById('studentName').value;
+        document.getElementById('sumID').textContent = document.getElementById('studentID').value;
+      }
+      else if (num === 3 && currentRole === "admin") {
+        document.getElementById('sumActivity').textContent = document.getElementById('activityName').value;
+        document.getElementById('sumType').textContent = document.getElementById('activityType').value;
+        document.getElementById('sumDate').textContent = document.getElementById('activityDate').value;
+        document.getElementById('sumStudent').textContent = "All Students";
+        document.getElementById('sumID').textContent = "-";
+      }
+    }
+
+    function restartForm() {
+      document.getElementById('adminForm').reset();
+      document.getElementById('studentForm').reset();
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      document.getElementById('slide0').classList.add('active');
+      currentRole = "";
+    }
+  </script>
+
+</body>
 </html>
