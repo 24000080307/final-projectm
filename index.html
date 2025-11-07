@@ -310,16 +310,22 @@
         return;
       }
 
-      if (currentRole === "admin" && user === "admin" && pass === "1234") {
+      // Accept any non-empty username/password for the selected role
+      // (per request: allow anybody to log in and update)
+      if (!user || !pass) {
+        document.getElementById('loginMessage').textContent = "Enter both username and password.";
+        return;
+      }
+
+      if (currentRole === "admin") {
         document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
         document.getElementById('slide1').classList.add('active');
+        document.getElementById('loginMessage').textContent = `Logged in as ADMIN: ${user}`;
       }
-      else if (currentRole === "user" && user === "student" && pass === "1234") {
+      else if (currentRole === "user") {
         document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
         document.getElementById('slide2').classList.add('active');
-      }
-      else {
-        document.getElementById('loginMessage').textContent = "Invalid credentials! Try again.";
+        document.getElementById('loginMessage').textContent = `Logged in as STUDENT: ${user}`;
       }
     }
 
