@@ -162,6 +162,15 @@
         <input type="date" id="activityDate" required>
       </form>
 
+      <div style="margin-top:10px;">
+        <button type="button" onclick="addActivity()">Add Activity</button>
+      </div>
+
+      <div style="margin-top:15px;">
+        <h4>Current Activities</h4>
+        <ul id="activityList" style="padding-left:18px;"></ul>
+      </div>
+
       <div class="buttons">
         <span></span>
         <button type="button" onclick="nextSlide(3)">➡️ View Student Panel</button>
@@ -182,10 +191,6 @@
 
         <label>Select Activity:</label>
         <select id="selectedActivity" required>
-          <option>Science Club</option>
-          <option>Basketball</option>
-          <option>Art Exhibition</option>
-          <option>Robotics Workshop</option>
         </select>
       </form>
 
@@ -223,6 +228,73 @@
 
   <script>
     let currentRole = "";
+    const ACTIVITIES_KEY = 'activities';
+    let activities = [];
+
+    function saveActivities() {
+      localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(activities));
+    }
+
+    function loadActivities() {
+      const raw = localStorage.getItem(ACTIVITIES_KEY);
+      if (raw) {
+        try { activities = JSON.parse(raw) } catch (e) { activities = [] }
+      }
+      // initialize defaults if empty
+      if (!activities || activities.length === 0) {
+        activities = [
+          { name: 'Science Club', type: 'Club', date: '' },
+          { name: 'Basketball', type: 'Sport', date: '' },
+          { name: 'Art Exhibition', type: 'Event', date: '' },
+          { name: 'Robotics Workshop', type: 'Workshop', date: '' }
+        ];
+        saveActivities();
+      }
+      populateActivitiesSelect();
+      renderActivityList();
+    }
+
+    function populateActivitiesSelect() {
+      const sel = document.getElementById('selectedActivity');
+      if (!sel) return;
+      sel.innerHTML = '';
+      activities.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.name;
+        opt.textContent = a.name;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderActivityList() {
+      const ul = document.getElementById('activityList');
+      if (!ul) return;
+      ul.innerHTML = '';
+      activities.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = `${a.name} — ${a.type}${a.date ? ' — ' + a.date : ''}`;
+        ul.appendChild(li);
+      });
+    }
+
+    function addActivity() {
+      const name = document.getElementById('activityName').value.trim();
+      const type = document.getElementById('activityType').value;
+      const date = document.getElementById('activityDate').value;
+      if (!name) { alert('Please enter an activity name'); return; }
+      // prevent duplicates
+      if (activities.some(a => a.name.toLowerCase() === name.toLowerCase())) {
+        alert('Activity already exists');
+        return;
+      }
+      const newAct = { name, type, date };
+      activities.push(newAct);
+      saveActivities();
+      populateActivitiesSelect();
+      renderActivityList();
+      document.getElementById('adminForm').reset();
+      alert('Activity added');
+    }
 
     function loginAs(role) {
       currentRole = role;
@@ -257,16 +329,21 @@
 
       // Summary details for student registration
       if (num === 3 && currentRole === "user") {
-        document.getElementById('sumActivity').textContent = document.getElementById('selectedActivity').value;
-        document.getElementById('sumType').textContent = "Club/Event";
-        document.getElementById('sumDate').textContent = new Date().toLocaleDateString();
+        const selectedName = document.getElementById('selectedActivity').value;
+        const act = activities.find(a => a.name === selectedName);
+        document.getElementById('sumActivity').textContent = selectedName;
+        document.getElementById('sumType').textContent = act ? act.type : 'Club/Event';
+        document.getElementById('sumDate').textContent = act && act.date ? act.date : new Date().toLocaleDateString();
         document.getElementById('sumStudent').textContent = document.getElementById('studentName').value;
         document.getElementById('sumID').textContent = document.getElementById('studentID').value;
       }
       else if (num === 3 && currentRole === "admin") {
-        document.getElementById('sumActivity').textContent = document.getElementById('activityName').value;
-        document.getElementById('sumType').textContent = document.getElementById('activityType').value;
-        document.getElementById('sumDate').textContent = document.getElementById('activityDate').value;
+        const name = document.getElementById('activityName').value || '';
+        const type = document.getElementById('activityType').value || '';
+        const date = document.getElementById('activityDate').value || '';
+        document.getElementById('sumActivity').textContent = name;
+        document.getElementById('sumType').textContent = type;
+        document.getElementById('sumDate').textContent = date;
         document.getElementById('sumStudent').textContent = "All Students";
         document.getElementById('sumID').textContent = "-";
       }
@@ -279,6 +356,9 @@
       document.getElementById('slide0').classList.add('active');
       currentRole = "";
     }
+
+    // initialize on load
+    document.addEventListener('DOMContentLoaded', loadActivities);
   </script>
 
 </body>
